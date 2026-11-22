@@ -1,7 +1,7 @@
 CC := gcc
 
 CC_FLAGS := -I./src -I. $(shell pkg-config --cflags sdl2)
-LD_FLAGS := $(shell pkg-config --libs sdl2)
+LD_FLAGS := $(shell pkg-config --libs sdl2) -lm
 
 
 SRC_DIR := src
