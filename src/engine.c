@@ -11,7 +11,10 @@ static SDL_Renderer* renderer = NULL;
 static SDL_Texture* texture = NULL;
 static uint32_t* colourBuffer = NULL;
 
-static vec3 camLocation = {1.3f , 1.4f, 1.2f};
+static Uint64 lastTime = 0;
+static Uint64 perfFreq = 0;
+
+static vec3 camLocation = {1.5f , 1.0f, 5.0f};
 static vec3 target = {0, 0, 0};
 static vec3 worldUp = {0, 1, 0};
 
@@ -22,63 +25,23 @@ static vec3 position = {0, 0, 0};
 static Mesh cube;
 
 static vec3 points[] = {
-    // Bottom tip
-    { 0.0f, -1.2f,  0.0f},
-
-    // Bottom ring
-    {-0.45f, -0.55f, -0.35f},
-    { 0.35f, -0.60f, -0.45f},
-    { 0.50f, -0.50f,  0.30f},
-    {-0.35f, -0.55f,  0.45f},
-
-    // Lower-middle ring
-    {-0.65f, -0.10f, -0.40f},
-    { 0.50f, -0.15f, -0.55f},
-    { 0.70f,  0.05f,  0.35f},
-    {-0.50f,  0.15f,  0.55f},
-
-    // Upper-middle ring
-    {-0.45f,  0.45f, -0.35f},
-    { 0.40f,  0.50f, -0.45f},
-    { 0.55f,  0.35f,  0.30f},
-    {-0.40f,  0.40f,  0.45f},
-
-    // Upper tip
-    { 0.05f,  1.25f,  0.0f}
+    {-0.5f, -0.5f, -0.5f},
+    { 0.5f, -0.5f, -0.5f},
+    { 0.5f,  0.5f, -0.5f},
+    {-0.5f,  0.5f, -0.5f},
+    {-0.5f, -0.5f,  0.5f},
+    { 0.5f, -0.5f,  0.5f},
+    { 0.5f,  0.5f,  0.5f},
+    {-0.5f,  0.5f,  0.5f}
 };
 
 static int indices[][3] = {
-    // Bottom cap
-    {0, 1, 2},
-    {0, 2, 3},
-    {0, 3, 4},
-    {0, 4, 1},
-
-    // Lower ring
-    {1, 5, 6},
-    {1, 6, 2},
-    {2, 6, 7},
-    {2, 7, 3},
-    {3, 7, 8},
-    {3, 8, 4},
-    {4, 8, 5},
-    {4, 5, 1},
-
-    // Middle to upper ring
-    {5, 9, 10},
-    {5, 10, 6},
-    {6, 10, 11},
-    {6, 11, 7},
-    {7, 11, 12},
-    {7, 12, 8},
-    {8, 12, 9},
-    {8, 9, 5},
-
-    // Upper tip
-    {9, 13, 10},
-    {10, 13, 11},
-    {11, 13, 12},
-    {12, 13, 9}
+    {4, 5, 6}, {4, 6, 7},
+    {0, 2, 1}, {0, 3, 2},
+    {0, 1, 5}, {0, 5, 4},
+    {3, 6, 2}, {3, 7, 6},
+    {1, 2, 6}, {1, 6, 5},
+    {0, 4, 7}, {0, 7, 3}
 };
 
 bool init(void) {
@@ -116,15 +79,22 @@ bool init(void) {
         return false;
     }
 
+    perfFreq = SDL_GetPerformanceFrequency();
+    lastTime = SDL_GetPerformanceCounter();
+
     return true;
 }
 
 void loop(void) {
+    Uint64 now = SDL_GetPerformanceCounter();
+    float dt = (float)((double)(now - lastTime)) / (double)perfFreq;
+    lastTime = now;
+
     mat4 camToWorld;
     getCameraToWorld(camLocation, target, worldUp, camToWorld);
 
     //rot[Y] += glm_rad(0.5f);
-    rot[X] -= glm_rad(1.2f);
+    rot[X] -= glm_rad(90 * dt);
 
     buildModelMatrix(scale, rot, position, cube.localToWorld);
 
