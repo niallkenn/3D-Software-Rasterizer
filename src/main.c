@@ -4,7 +4,10 @@
 #include "engine.h"
 
 int main(void) {
-    if (!init()) return 1;
+    if (!init()) {
+        printf("failed to initialise.\n");
+        return 1;
+    }
 
     bool running = true;
     

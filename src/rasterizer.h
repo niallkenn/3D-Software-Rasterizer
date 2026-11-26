@@ -2,6 +2,7 @@
 #define RAS_H
 
 #include <cglm/cglm.h>
+#include <stdbool.h>
 
 typedef struct {
     mat4 localToWorld; // local -> world transform, rotation, scale, translation
@@ -15,7 +16,7 @@ typedef struct {
     uint32_t* triColours; // colour for each triangle
 } Mesh;
 
-void mesh_init(size_t numVerts, size_t numTris, Mesh* mesh);
+bool mesh_init(size_t numVerts, size_t numTris, Mesh* mesh);
 
 void mesh_destroy(Mesh* mesh);
 

@@ -66,6 +66,11 @@ void drawTri(vec2 p0, vec2 p1, vec2 p2, uint32_t colour, uint32_t* buffer) {
 }
 
 void drawConvexPolygon(vec2* points, uint32_t* colours, int numPoints, uint32_t* buffer) {
+    if (numPoints == 3) {
+        drawTri(points[0], points[1], points[2], colours[0], buffer);
+        return;
+    }
+    
     for (int i = 0; i < numPoints - 1; i++) {
         drawTri(points[0], points[i], points[i + 1], colours[i], buffer);
     }
@@ -81,8 +86,8 @@ uint32_t randomColour(void) {
     return colour;
 }
 
-void mesh_init(size_t numVerts, size_t numTris, Mesh* mesh) {
-    if (!mesh) return;
+bool mesh_init(size_t numVerts, size_t numTris, Mesh* mesh) {
+    if (!mesh) return false;
 
     glm_mat4_identity(mesh->localToWorld);
 
@@ -92,11 +97,13 @@ void mesh_init(size_t numVerts, size_t numTris, Mesh* mesh) {
 
     if (!mesh->vertices || !mesh->indices || !mesh->triColours) {
         mesh_destroy(mesh);
-        return;
+        return false;
     }
 
     mesh->numVerts = numVerts;
     mesh->numTris = numTris;
+
+    return true;
 }
 
 void mesh_destroy(Mesh* mesh) {
